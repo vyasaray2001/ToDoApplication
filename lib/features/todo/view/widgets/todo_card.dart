@@ -44,24 +44,31 @@ class TodoTaskCard extends ConsumerStatefulWidget {
 }
 
 class _TodoTaskCardState extends ConsumerState<TodoTaskCard> {
-  bool isClicked = true;
+  bool isClicked = false;
   String compltedTime = "";
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         leading: Checkbox(
+          value: isClicked,
           onChanged: (value) {
             setState(() {
               isClicked = !isClicked;
               if (isClicked) {
-                compltedTime = DateTime.now().toString().substring(0, 16);
+                if (widget.task.addedAt.toString().substring(0, 10) ==
+                    DateTime.now().toString().substring(0, 10)) {
+                  compltedTime = "Completed:" +
+                      DateTime.now().toString().substring(11, 16);
+                } else {
+                  compltedTime =
+                      "Completed:" + DateTime.now().toString().substring(0, 16);
+                }
               } else {
                 compltedTime = "";
               }
             });
           },
-          value: isClicked,
         ),
         title: Text(
           widget.task.task,
@@ -78,7 +85,7 @@ class _TodoTaskCardState extends ConsumerState<TodoTaskCard> {
             Padding(
               padding: const EdgeInsets.only(left: 2),
               child: Text(compltedTime),
-            )
+            ),
           ],
         ),
         trailing: IconButton(

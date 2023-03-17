@@ -8,13 +8,23 @@ import 'package:to_do_application/features/todo/view/todo_page.dart';
 import 'package:to_do_application/features/todo/viewmodel/todo_form_viewmodel.dart';
 import 'package:to_do_application/utils/myroutes.dart';
 
-import '../features/todo/model/todo_task.dart';
-import '../features/todo/viewmodel/todo_viewmodel.dart';
+import '../model/todo_task.dart';
+import '../viewmodel/todo_viewmodel.dart';
 
 class TaskForm extends ConsumerWidget {
   const TaskForm({super.key});
 
-  void goToToDoPage(BuildContext context) {}
+  void goToToDoPage(
+      BuildContext context, TodoFormViewModel formViewModel, WidgetRef ref) {
+    if (formViewModel.formKey.currentState?.validate() ?? false) {
+      var num = Random().nextInt(1000);
+      ref.read(TodoViewModel.provider.notifier).addTask(TodoTask(
+          id: num,
+          task: formViewModel.controller.text.toString(),
+          addedAt: DateTime.now()));
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context, ref) {
@@ -30,7 +40,7 @@ class TaskForm extends ConsumerWidget {
         child: Column(
           children: [
             Form(
-              key: TodoFormViewModel().formKey,
+              key: formViewModel.formKey,
               child: TextFormField(
                 controller: formViewModel.controller,
                 decoration: InputDecoration(
@@ -48,14 +58,7 @@ class TaskForm extends ConsumerWidget {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (formViewModel.formKey.currentState?.validate() ?? true) {
-                    var num = Random().nextInt(1000);
-                    ref.read(TodoViewModel.provider.notifier).addTask(TodoTask(
-                        id: num,
-                        task: formViewModel.controller.text.toString(),
-                        addedAt: DateTime.now()));
-                    Navigator.pushNamed(context, MyRoutes.todoPage);
-                  }
+                  goToToDoPage(context, formViewModel, ref);
                 },
                 child: Text("Submit"))
           ],

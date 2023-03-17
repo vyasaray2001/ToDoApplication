@@ -4,6 +4,7 @@ import 'package:to_do_application/utils/myroutes.dart';
 
 import '../model/todo_task.dart';
 import '../viewmodel/todo_viewmodel.dart';
+import 'widgets/todo_card.dart';
 
 class TodoPage extends ConsumerWidget {
   const TodoPage({super.key});
@@ -27,27 +28,6 @@ class TodoPage extends ConsumerWidget {
           itemBuilder: (context, index) {
             return TodoTaskCard(task: tasks[index]);
           }),
-    );
-  }
-}
-
-class TodoTaskCard extends ConsumerWidget {
-  const TodoTaskCard({
-    super.key,
-    required this.task,
-  });
-  final TodoTask task;
-  @override
-  Widget build(BuildContext context, ref) {
-    return Card(
-      child: ListTile(
-        title: Text(task.task),
-        trailing: IconButton(
-            onPressed: () {
-              ref.read(TodoViewModel.provider.notifier).removeTask(task);
-            },
-            icon: Icon(Icons.delete)),
-      ),
     );
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_application/Pages/task_form.dart';
 import 'package:to_do_application/features/todo/view/todo_page.dart';
 import 'package:to_do_application/utils/myroutes.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

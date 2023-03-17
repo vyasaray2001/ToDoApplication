@@ -1,19 +1,26 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_application/features/todo/view/todo_page.dart';
+import 'package:to_do_application/features/todo/viewmodel/todo_form_viewmodel.dart';
 import 'package:to_do_application/utils/myroutes.dart';
 
-class TaskForm extends StatelessWidget {
-  //const TaskForm({super.key});
-  final _formKey = GlobalKey<FormState>();
+import '../features/todo/model/todo_task.dart';
+import '../features/todo/viewmodel/todo_viewmodel.dart';
 
-  void goToToDoPage() {
-    if (_formKey.currentState!.validate()) {}
-  }
+class TaskForm extends ConsumerWidget {
+  const TaskForm({super.key});
+
+  void goToToDoPage(BuildContext context) {}
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final formViewModel = ref.watch(TodoFormViewModel.provider);
+    final tasks = ref.watch(TodoViewModel.provider);
+
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text("Task")),
@@ -23,8 +30,9 @@ class TaskForm extends StatelessWidget {
         child: Column(
           children: [
             Form(
-              key: _formKey,
+              key: TodoFormViewModel().formKey,
               child: TextFormField(
+                controller: formViewModel.controller,
                 decoration: InputDecoration(
                     label: Text("Task Name"),
                     hintText: "Enter Your Task Here",
@@ -40,7 +48,14 @@ class TaskForm extends StatelessWidget {
             ),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, MyRoutes.todoPage);
+                  if (formViewModel.formKey.currentState?.validate() ?? true) {
+                    var num = Random().nextInt(1000);
+                    ref.read(TodoViewModel.provider.notifier).addTask(TodoTask(
+                        id: num,
+                        task: formViewModel.controller.text.toString(),
+                        addedAt: DateTime.now()));
+                    Navigator.pushNamed(context, MyRoutes.todoPage);
+                  }
                 },
                 child: Text("Submit"))
           ],

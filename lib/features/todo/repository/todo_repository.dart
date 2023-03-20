@@ -9,7 +9,7 @@ class TodoRepository {
   List<TodoTask> _tasks = [];
 
   List<TodoTask> getTodoTask() {
-    return _tasks;
+    return _tasks.toList();
   }
 
   void add(TodoTask task) {

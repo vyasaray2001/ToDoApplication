@@ -32,7 +32,7 @@ import '../../viewmodel/todo_viewmodel.dart';
 //   }
 // }
 
-class TodoTaskCard extends ConsumerStatefulWidget {
+class TodoTaskCard extends ConsumerWidget {
   const TodoTaskCard({
     super.key,
     required this.task,
@@ -40,57 +40,37 @@ class TodoTaskCard extends ConsumerStatefulWidget {
   final TodoTask task;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _TodoTaskCardState();
-}
-
-class _TodoTaskCardState extends ConsumerState<TodoTaskCard> {
-  bool isClicked = false;
-  String compltedTime = "";
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final isCompleted = task.completedAt != null;
     return Card(
       child: ListTile(
         leading: Checkbox(
-          value: isClicked,
+          value: isCompleted,
           onChanged: (value) {
-            setState(() {
-              isClicked = !isClicked;
-              if (isClicked) {
-                if (widget.task.addedAt.toString().substring(0, 10) ==
-                    DateTime.now().toString().substring(0, 10)) {
-                  compltedTime = "Completed:" +
-                      DateTime.now().toString().substring(11, 16);
-                } else {
-                  compltedTime =
-                      "Completed:" + DateTime.now().toString().substring(0, 16);
-                }
-              } else {
-                compltedTime = "";
-              }
-            });
+            ref.read(TodoViewModel.provider.notifier).markCompleted(task);
           },
         ),
         title: Text(
-          widget.task.task,
-          style: isClicked
+          task.task,
+          style: isCompleted
               ? TextStyle(
                   decoration: TextDecoration.lineThrough,
                   decorationThickness: 2.85,
                 )
-              : TextStyle(),
+              : null,
         ),
         subtitle: Row(
           children: [
-            Text(widget.task.addedAt.toString().substring(0, 16)),
+            Text(task.addedAt.toString().substring(0, 16)),
             Padding(
               padding: const EdgeInsets.only(left: 2),
-              child: Text(compltedTime),
+              child: Text(task.completedAt?.toIso8601String() ?? ""),
             ),
           ],
         ),
         trailing: IconButton(
             onPressed: () {
-              ref.read(TodoViewModel.provider.notifier).removeTask(widget.task);
+              ref.read(TodoViewModel.provider.notifier).removeTask(task);
             },
             icon: Icon(Icons.delete)),
       ),

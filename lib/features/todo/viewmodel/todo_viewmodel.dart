@@ -18,13 +18,16 @@ class TodoViewModel extends StateNotifier<List<TodoTask>> {
 
   void addTask(TodoTask task) {
     _repository.add(task);
-    state = [..._repository.getTodoTask()];
+    _getData();
+  }
+
+  void markCompleted(TodoTask task) {
+    _repository.update(task.copyWith(completedAt: DateTime.now()));
+    _getData();
   }
 
   void removeTask(TodoTask task) {
-    // state = [...(state..remove(task))];
     _repository.delete(task);
-    //_getData();
-    state = [..._repository.getTodoTask()];
+    _getData();
   }
 }
